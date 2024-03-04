@@ -28,7 +28,7 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card"
 
-const SignIn: React.FC = () => {
+const SignUp: React.FC = () => {
   const [user] = useAuthState(auth);
 
   const navigate = useNavigate();
@@ -36,14 +36,10 @@ const SignIn: React.FC = () => {
   const {search} = location;
 
   const [email, setEmail] = React.useState<string>('');
-  const [userName, setUsername] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
-  const [confirmPassword, setConfirmPassword] = React.useState<string>('');
 
-  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value);
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value);
-  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value);
 
   const [loginLoading, setLoginLoading] = React.useState(false);
   const [loginError, setLoginError] = React.useState('');
@@ -87,10 +83,6 @@ const SignIn: React.FC = () => {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    if (!checkSamePasswords(password, confirmPassword)) {
-      setLoginError('Passwords do not match!');
-      return;
-    }
     setLoginLoading(true);
     // AUTHENTICATION USING FIREBASE
     createUserWithEmailAndPassword(auth, email, password)
@@ -103,12 +95,13 @@ const SignIn: React.FC = () => {
         // ...
       })
       .catch((error) => {
-        const errorCode = error.code;
         const errorMessage = error.message;
         console.log(errorMessage);
         setLoginLoading(false);
         if (errorMessage === 'Firebase: Error (auth/email-already-in-use).') {
           setLoginError('Email is already in used');
+        } else if (errorMessage === 'Firebase: Error (auth/missing-email).') {
+          setLoginError('Please fill in the email')
         }
         
         // ..
@@ -150,11 +143,6 @@ const SignIn: React.FC = () => {
                 <form className="mx-auto w-96 p-5 text-white flex flex-col gap-4 border border-white border-opacity-20 rounded-lg">
                   <div className="text-xl grid place-items-center">Welcome to ZenTask</div>
                   <div className="flex flex-col gap-2">
-                  
-                  <div className="flex flex-col gap-2">
-                  <div>Username</div>
-                    <input type="text" className={cn(classNameInput)} onChange={handleUsernameChange} />
-                  </div>
 
                   <div>Email</div>
                     <input type="text" className={cn(classNameInput)} onChange={handleEmailChange}/>
@@ -165,10 +153,7 @@ const SignIn: React.FC = () => {
                     <input type="password" className={cn(classNameInput)} onChange={handlePasswordChange}/>
                   </div>
 
-                  <div className="flex flex-col gap-2">
-                  <div>Confirm Password</div>
-                    <input type="password" className={cn(classNameInput)} onChange={handleConfirmPasswordChange}/>
-                  </div>
+                  
                   {infoMsg !== '' && (
                     <div className='text-green-600 info-msg'>{infoMsg}</div>
                   )}
@@ -186,7 +171,7 @@ const SignIn: React.FC = () => {
                     variant="secondary" 
                     onClick={handleSubmit}
                   >
-                    Submit
+                    Sign In
                   </Button>
                   </HoverCardTrigger>
 
@@ -195,13 +180,14 @@ const SignIn: React.FC = () => {
                   </HoverCardContent>
                    </HoverCard>                
                   <Button 
-                    variant="secondary" 
+                    variant="destructive" 
                     onClick={handleEmailLink}
                   >
                     Sign in with email
                   </Button>
-                  
-                  
+                  <div className="flex gap-1 w-full justify-center">
+                    Don't have an account? <div className='cursor-pointer underline' onClick={() => navigate('/signup')}>Sign Up</div>
+                  </div>
                 </form>    
               )}
             </>
@@ -214,9 +200,5 @@ const SignIn: React.FC = () => {
   )
 }
 
-const checkSamePasswords = (password: string, confirmPassword: string) => {
-  return password === confirmPassword;
-}
-
-export default SignIn;
+export default SignUp;
 

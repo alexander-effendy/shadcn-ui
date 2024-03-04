@@ -7,12 +7,12 @@ const Dashboard = () => {
   const handleLogOut = (e: any) => {
 
     signOut(auth).then(() => {
-      navigate('/signin');
+      navigate('/signup');
     }).catch(err => {
       console.log('cannot sign outerHeight', err);
     })
     e.preventDefault();
-    navigate('./signin');
+    navigate('./signup');
   }
 
   return (
