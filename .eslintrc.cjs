@@ -14,5 +14,8 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
+    "rules": {
+      "<rule-name>": "off"
+    }
   },
 }
